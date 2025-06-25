@@ -1,0 +1,38 @@
+# Nama workflow yang akan muncul di tab Actions
+name: Auto Greening Commit
+
+on:
+  # (1) Memungkinkan workflow dijalankan secara manual dari tab Actions
+  workflow_dispatch:
+  
+  # (2) Menjadwalkan workflow untuk berjalan secara otomatis
+  schedule:
+    # Menjalankan setiap hari jam 5 pagi UTC (sekitar jam 12 siang WIB)
+    # Anda bisa mengubah jadwalnya. Gunakan https://crontab.guru/ untuk bantuan
+    - cron: '0 5 * * *'
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    steps:
+      # (3) Langkah pertama: Mengambil kode dari repositori Anda
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # (4) Mengkonfigurasi identitas Git untuk commit
+      - name: Configure Git
+        run: |
+          git config --global user.name 'imdypha-bot'
+          git config --global user.email 'imdypha-bot@users.noreply.github.com'
+
+      # (5) Membuat commit kosong. Inilah "sihirnya".
+      - name: Create Empty Commit
+        run: |
+          git commit --allow-empty -m "feat: Automatic daily commit for green graph"
+
+      # (6) Mendorong (push) commit ke repositori
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.AUTO_COMMIT_TOKEN }}
+          branch: main # atau master, sesuaikan dengan nama branch utama Anda
