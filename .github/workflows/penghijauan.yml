@@ -8,24 +8,28 @@ on:
 jobs:
   auto_commit:
     runs-on: ubuntu-latest
-
-    # TAMBAHKAN BAGIAN INI UNTUK MEMBERI IZIN TULIS
     permissions:
       contents: write
 
     steps:
+      # Langkah checkout, kita tambahkan fetch-depth: 0 agar mengambil semua history
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
           git config --global user.name 'imdypha-bot'
           git config --global user.email 'imdypha-bot@users.noreply.github.com'
+      
+      # LANGKAH KUNCI: Tambahkan langkah ini untuk mengambil perubahan terbaru
+      - name: Pull latest changes
+        run: git pull origin main # Ganti 'main' dengan 'master' jika itu nama branch utama Anda
 
       - name: Create Empty Commit
         run: |
           git commit --allow-empty -m "feat: Automatic daily commit for green graph"
 
-      # UBAH LANGKAH PUSH MENJADI LEBIH SEDERHANA
       - name: Push changes
         run: git push
